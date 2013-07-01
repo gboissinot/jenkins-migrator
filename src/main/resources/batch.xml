@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/batch
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <import resource="classpath:batch-infra.xml"/>
+    <import resource="classpath:cvs2Svn-si.xml"/>
+
+    <batch:job id="batchJobMigration">
+        <batch:step id="stepJobBackup" next="stepMigration">
+            <batch:tasklet>
+                <batch:chunk reader="backupReader"
+                             writer="backupWriter"
+                             commit-interval="10"/>
+                <batch:listeners>
+                    <batch:listener>
+                        <bean class="org.springframework.batch.core.listener.ExecutionContextPromotionListener">
+                            <property name="keys" value="configJobPaths,migrationMap"/>
+                        </bean>
+                    </batch:listener>
+                </batch:listeners>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="stepMigration">
+            <batch:tasklet>
+                <batch:chunk reader="migrateReader"
+                             processor="migrateProcessor"
+                             writer="migrateWriter"
+                             commit-interval="10" skip-limit="100">
+                    <batch:skippable-exception-classes>
+                        <batch:include class="com.boissinot.jenkins.jobmigrator.JobMigrationException"/>
+                    </batch:skippable-exception-classes>
+                </batch:chunk>
+                <batch:listeners>
+                    <batch:listener>
+                        <bean class="com.boissinot.jenkins.jobmigrator.MigrationSkipListener"/>
+                    </batch:listener>
+                </batch:listeners>
+            </batch:tasklet>
+        </batch:step>
+    </batch:job>
+
+    <bean id="backupReader" class="com.boissinot.jenkins.jobmigrator.BackupJobItemReader" scope="step">
+        <constructor-arg value="#{jobParameters['jenkinsHome']}"/>
+        <constructor-arg value="#{jobParameters['svnUrlRoot']}"/>
+        <constructor-arg value="#{jobParameters['inputMigrationFilePath']}"/>
+    </bean>
+    <bean id="backupWriter" class="com.boissinot.jenkins.jobmigrator.BackupJobItemWriter"/>
+    <bean id="migrateReader" class="com.boissinot.jenkins.jobmigrator.MigrationJobItemReader"/>
+    <bean id="migrateWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
+        <property name="resource" value="file:exported-jobs.txt"/>
+        <property name="shouldDeleteIfExists" value="true"/>
+        <property name="encoding" value="UTF-8"/>
+        <property name="lineAggregator">
+            <bean class="org.springframework.batch.item.file.transform.DelimitedLineAggregator"/>
+        </property>
+    </bean>
+
+</beans>
