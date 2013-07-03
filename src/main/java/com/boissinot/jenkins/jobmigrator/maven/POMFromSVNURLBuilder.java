@@ -7,9 +7,7 @@ import org.springframework.integration.support.MessageBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
-import java.net.Proxy;
 import java.net.URL;
 
 /**
@@ -44,10 +42,10 @@ public class POMFromSVNURLBuilder {
 
         String pomFileContent = null;
         try {
-            String pomURL = remoteURL+ "pom.xml";
+            String pomURL = remoteURL + "pom.xml";
 
             //Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy", 8080));
-            pomURL=pomURL.replace("https", "http");
+            pomURL = pomURL.replace("https", "http");
             System.out.println("Fetching " + pomURL);
 
             URL url = new URL(pomURL);

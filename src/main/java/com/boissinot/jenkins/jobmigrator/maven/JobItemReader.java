@@ -56,7 +56,7 @@ public class JobItemReader implements ItemReader<File> {
         }
 
         final String configJobPath = configJobPaths.get(0);
-        System.out.println("Read job: "+ configJobPath);
+        System.out.println("Read job: " + configJobPath);
         configJobPaths.remove(0);
         return new File(configJobPath);
     }

@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        if (args.length==0){
+        if (args.length == 0) {
             System.out.println("java <-Doption1=value1> <-Doption2=value2> ... -jar job-extractor.jar <cmd>");
             System.out.println("The following commands are available.");
             System.out.println("[cvs2svn] - Converts cvs to svn section in the job configuration file for a Jenkins home.");
