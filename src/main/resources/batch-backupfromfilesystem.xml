@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:batch="http://www.springframework.org/schema/batch"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/batch
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <import resource="classpath:batch-infra.xml"/>
+
+    <batch:job id="copyJenkinsHomeByFilesysten">
+        <batch:step id="copy">
+            <batch:tasklet>
+                <batch:chunk reader="copyConfigReader"
+                             writer="copyConfigWriter"
+                             commit-interval="100"/>
+            </batch:tasklet>
+        </batch:step>
+    </batch:job>
+
+    <bean id="copyConfigReader"
+          class="com.boissinot.jenkins.jobmigrator.backup.fromfileystem.ConfigCopyItemReader"
+          scope="step">
+        <constructor-arg value="#{jobParameters['jobsDirPath']}"/>
+    </bean>
+    <bean id="copyConfigWriter"
+          class="com.boissinot.jenkins.jobmigrator.backup.fromfileystem.ConfigCopyItemWriter"
+          scope="step">
+        <constructor-arg value="#{jobParameters['outputConfigsDirPath']}"/>
+    </bean>
+
+</beans>

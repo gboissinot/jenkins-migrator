@@ -1,4 +1,4 @@
-package com.boissinot.jenkins.jobmigrator;
+package com.boissinot.jenkins.jobmigrator.cvs2svn;
 
 import com.sun.org.apache.xerces.internal.dom.DeferredElementNSImpl;
 import org.springframework.integration.Message;

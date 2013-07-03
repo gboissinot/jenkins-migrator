@@ -21,17 +21,17 @@
 
     <int:chain input-channel="inputConfigFiles">
         <int:service-activator>
-            <bean class="com.boissinot.jenkins.jobmigrator.ConfigMessageBuilder"/>
+            <bean class="com.boissinot.jenkins.jobmigrator.cvs2svn.ConfigMessageBuilder"/>
         </int:service-activator>
 
         <int:service-activator>
-            <bean class="com.boissinot.jenkins.jobmigrator.CVSJobWithModuleFilter"/>
+            <bean class="com.boissinot.jenkins.jobmigrator.cvs2svn.CVSJobWithModuleFilter"/>
         </int:service-activator>
 
         <int-xml:xslt-transformer xsl-resource="xsl/cvs2svn-jobMigrator.xsl" xslt-param-headers="SVN_URL"/>
 
         <int:service-activator>
-            <bean class="com.boissinot.jenkins.jobmigrator.OutputConfigMessageBuilder"/>
+            <bean class="com.boissinot.jenkins.jobmigrator.cvs2svn.OutputConfigMessageBuilder"/>
         </int:service-activator>
     </int:chain>
 

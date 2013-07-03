@@ -11,7 +11,7 @@
     <import resource="classpath:batch-infra.xml"/>
     <import resource="classpath:cvs2Svn-si.xml"/>
 
-    <batch:job id="batchJobMigration">
+    <batch:job id="batchCVS2SVNMigration">
         <batch:step id="stepJobBackup" next="stepMigration">
             <batch:tasklet>
                 <batch:chunk reader="backupReader"
@@ -38,20 +38,20 @@
                 </batch:chunk>
                 <batch:listeners>
                     <batch:listener>
-                        <bean class="com.boissinot.jenkins.jobmigrator.MigrationSkipListener"/>
+                        <bean class="com.boissinot.jenkins.jobmigrator.cvs2svn.MigrationSkipListener"/>
                     </batch:listener>
                 </batch:listeners>
             </batch:tasklet>
         </batch:step>
     </batch:job>
 
-    <bean id="backupReader" class="com.boissinot.jenkins.jobmigrator.BackupJobItemReader" scope="step">
+    <bean id="backupReader" class="com.boissinot.jenkins.jobmigrator.cvs2svn.BackupJobItemReader" scope="step">
         <constructor-arg value="#{jobParameters['jenkinsHome']}"/>
         <constructor-arg value="#{jobParameters['svnUrlRoot']}"/>
         <constructor-arg value="#{jobParameters['inputMigrationFilePath']}"/>
     </bean>
-    <bean id="backupWriter" class="com.boissinot.jenkins.jobmigrator.BackupJobItemWriter"/>
-    <bean id="migrateReader" class="com.boissinot.jenkins.jobmigrator.MigrationJobItemReader"/>
+    <bean id="backupWriter" class="com.boissinot.jenkins.jobmigrator.cvs2svn.BackupJobItemWriter"/>
+    <bean id="migrateReader" class="com.boissinot.jenkins.jobmigrator.cvs2svn.MigrationJobItemReader"/>
     <bean id="migrateWriter" class="org.springframework.batch.item.file.FlatFileItemWriter">
         <property name="resource" value="file:exported-jobs.txt"/>
         <property name="shouldDeleteIfExists" value="true"/>

@@ -1,5 +1,6 @@
-package com.boissinot.jenkins.jobmigrator;
+package com.boissinot.jenkins.jobmigrator.cvs2svn;
 
+import com.boissinot.jenkins.jobmigrator.JobMigrationException;
 import org.apache.commons.io.FileUtils;
 import org.springframework.integration.Message;
 import org.springframework.integration.support.MessageBuilder;

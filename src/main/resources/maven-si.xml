@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/integration
+        http://www.springframework.org/schema/integration/spring-integration.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <int:channel id="inputConfigFiles"/>
+
+    <int:chain input-channel="inputConfigFiles">
+        <!-- Build a SPI message with all functional headers
+             and config xml content as payload -->
+        <int:service-activator>
+            <bean class="com.boissinot.jenkins.jobmigrator.maven.JobMessageBuilder"/>
+        </int:service-activator>
+        <!-- Filters on job with svn section -->
+        <int:filter>
+            <bean class="com.boissinot.jenkins.jobmigrator.maven.SVNJobFilter"/>
+        </int:filter>
+        <!-- Build a new SPI message with remote SVN Url as payload
+             and previous SPI message headers -->
+        <int:service-activator>
+            <bean class="com.boissinot.jenkins.jobmigrator.maven.RemoteSVNURLMessageBuilder"/>
+        </int:service-activator>
+        <!-- Extract POM File and build a new SPI message
+            with pom.xml as content and previous message headers -->
+        <int:service-activator>
+            <bean class="com.boissinot.jenkins.jobmigrator.maven.POMFromSVNURLBuilder"/>
+        </int:service-activator>
+
+        <!-- Modify POM -->
+        <int:service-activator>
+            <bean class="com.boissinot.jenkins.jobmigrator.maven.ModifyPOM"/>
+        </int:service-activator>
+
+        <!-- Copy the new pom file and get its paths for the followed batch item writer -->
+        <int:service-activator>
+            <bean class="com.boissinot.jenkins.jobmigrator.maven.BuildPomOutputPath"/>
+        </int:service-activator>
+    </int:chain>
+
+
+</beans>

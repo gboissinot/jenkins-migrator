@@ -1,4 +1,6 @@
-package com.boissinot.jenkins.jobmigrator;
+package com.boissinot.jenkins.jobmigrator.cvs2svn;
+
+import com.boissinot.jenkins.jobmigrator.JobMigrationException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

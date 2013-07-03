@@ -1,4 +1,4 @@
-package com.boissinot.jenkins.jobmigrator;
+package com.boissinot.jenkins.jobmigrator.cvs2svn;
 
 /**
  * @author Gregory Boissinot

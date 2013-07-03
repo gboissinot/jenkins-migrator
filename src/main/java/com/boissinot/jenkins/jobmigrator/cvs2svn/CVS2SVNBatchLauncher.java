@@ -1,4 +1,4 @@
-package com.boissinot.jenkins.jobmigrator;
+package com.boissinot.jenkins.jobmigrator.cvs2svn;
 
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -11,32 +11,35 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @author Gregory Boissinot
  */
-public class BatchLauncher {
+public class CVS2SVNBatchLauncher {
 
-    private final String defaultJenkinsHome;
-    private final String defaultSvnRoot;
-    private final String defaultInputMigrationFile;
+    private String defaultJenkinsHome;
+    private String defaultSvnRoot;
+    private String defaultInputMigrationFile;
 
-    private BatchLauncher(String defaultJenkinsHome, String defaultSvnRoot, String defaultInputMigrationFile) {
+    public CVS2SVNBatchLauncher() {
+    }
+
+    private CVS2SVNBatchLauncher(String defaultJenkinsHome, String defaultSvnRoot, String defaultInputMigrationFile) {
         this.defaultJenkinsHome = defaultJenkinsHome;
         this.defaultSvnRoot = defaultSvnRoot;
         this.defaultInputMigrationFile = defaultInputMigrationFile;
     }
 
-    public static void main(String[] args) throws JobInstanceAlreadyCompleteException, JobParametersInvalidException, JobRestartException, JobExecutionAlreadyRunningException {
-        String defaultJenkinsHome = "/Users/gregory/Dev/jenkins-migrator/configs_test/";
+    public void launch() throws JobInstanceAlreadyCompleteException, JobParametersInvalidException, JobRestartException, JobExecutionAlreadyRunningException {
+        String defaultJenkinsHome = "/Users/gregory/Dev/jenkins-migrator/configs/";
         String defaultSvnRoot = "https://svn.code.sf.net/p/tango-ds/code/";
         String defaultInputMigrationFile = "/Users/gregory/Dev/tango-ds.csv";
 
-        BatchLauncher launcher = new BatchLauncher(defaultJenkinsHome, defaultSvnRoot, defaultInputMigrationFile);
-        launcher.launch();
+        CVS2SVNBatchLauncher launcher = new CVS2SVNBatchLauncher(defaultJenkinsHome, defaultSvnRoot, defaultInputMigrationFile);
+        launcher.launchJob();
     }
 
-    private void launch() throws JobInstanceAlreadyCompleteException, JobParametersInvalidException, JobRestartException, JobExecutionAlreadyRunningException {
+    private void launchJob() throws JobInstanceAlreadyCompleteException, JobParametersInvalidException, JobRestartException, JobExecutionAlreadyRunningException {
         ApplicationContext applicationContext
-                = new ClassPathXmlApplicationContext("batch.xml");
+                = new ClassPathXmlApplicationContext("batch-cvs2svn.xml");
 
-        final Job job = applicationContext.getBean("batchJobMigration", Job.class);
+        final Job job = applicationContext.getBean("batchCVS2SVNMigration", Job.class);
         final JobLauncher jobLauncher = applicationContext.getBean(JobLauncher.class);
 
         long start = System.currentTimeMillis();

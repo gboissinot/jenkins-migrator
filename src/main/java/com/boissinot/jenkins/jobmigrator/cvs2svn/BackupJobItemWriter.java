@@ -1,4 +1,4 @@
-package com.boissinot.jenkins.jobmigrator;
+package com.boissinot.jenkins.jobmigrator.cvs2svn;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.batch.item.ItemWriter;
