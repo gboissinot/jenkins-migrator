@@ -7,8 +7,7 @@ import org.springframework.integration.support.MessageBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 
 /**
  * @author Gregory Boissinot
@@ -21,36 +20,17 @@ public class POMFromSVNURLBuilder {
     public Message<String> process(Message<String> remoteURLMessage) {
 
         String remoteURL = remoteURLMessage.getPayload();
-
-//        DAVRepositoryFactory.setup();
-//        SVNRepository repository = null;
-//        try {
-//            repository = SVNRepositoryFactory.create(SVNURL.parseURIEncoded(remoteURL));
-//        } catch (SVNException e) {
-//            e.printStackTrace();
-//        }
-//        SVNProperties fileProperties = new SVNProperties();
-//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//        final long revision;
-//        try {
-//            revision = repository.getFile("pom.xml", -1, fileProperties, byteArrayOutputStream);
-//        } catch (SVNException e) {
-//            throw new JobMigrationException(e);
-//        }
-//
-//        final String pomFileContent = new String(byteArrayOutputStream.toByteArray());
-
-        String pomFileContent = null;
+        String pomFileContent;
         try {
             String pomURL = remoteURL + "pom.xml";
 
-            //Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy", 8080));
+                 Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.synchrotron-soleil.fr", 8080));
             pomURL = pomURL.replace("https", "http");
             System.out.println("Fetching " + pomURL);
 
             URL url = new URL(pomURL);
-
-            final InputStream inputStream = url.openStream();
+            final URLConnection urlConnection = url.openConnection(proxy);
+            final InputStream inputStream = urlConnection.getInputStream();
             pomFileContent = IOUtils.toString(inputStream, "UTF-8");
             inputStream.close();
 
