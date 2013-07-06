@@ -47,5 +47,6 @@ public class BuildPomOutputPath {
         }
 
         return outputPomFile.getAbsolutePath();
+
     }
 }
